@@ -10,18 +10,20 @@ namespace CigamPrintTest.Modelo
 {
     public class ResultadoTeste
     {
-        public string CodTeste { get; set; } = string.Empty;
-        public DateTime DataHora { get; set; } = DateTime.Now;
-        public AmbienteInfo Ambiente { get; set; }
+        public string CodTeste { get; set; }
+        public DateTime DataHora { get; set; }
+        public string Cliente { get; set; } = string.Empty;
+        public string CigamInstal { get; set; } = string.Empty;
         public PerfilImpressao Perfil { get; set; }
-        public string Arquivo { get; set; } = string.Empty;
-        public long TamanhoArquivoBytes { get; set; }
-        public int Vias { get; set; } = 1;
+        public string Arquivo { get; set; }
+        public int Vias { get; set; }
         public string ComandoFinal { get; set; } = string.Empty;
         public string PastaExecucaoFinal { get; set; } = string.Empty;
-        public List<EtapaTeste> Etapas { get; } = new List<EtapaTeste>();
-        public List<InfoJob> JobsDetectados { get; } = new List<InfoJob>();
-        public Dictionary<string, string> FlagsFilas { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        public long TamanhoArquivoBytes { get; set; }
+        public AmbienteInfo Ambiente { get; set; }
+        public List<EtapaTeste> Etapas { get; set; } = new List<EtapaTeste>();
+        public List<InfoJob> JobsDetectados { get; set; } = new List<InfoJob>();
+        public Dictionary<string, string> FlagsFilas { get; set; } = new Dictionary<string, string>();
         public string ConfirmacaoPapel { get; set; } = "Não perguntado";
         public string DiagnosticoFinal { get; set; } = string.Empty;
 
@@ -115,7 +117,9 @@ namespace CigamPrintTest.Modelo
             var sb = new StringBuilder();
             sb.AppendLine("================================================================================");
             sb.AppendLine($"DIAGNÓSTICO DE IMPRESSÃO CIGAM - {CodTeste}");
-            sb.AppendLine($"Data/Hora: {DataHora:yyyy-MM-dd HH:mm:ss}");
+            sb.AppendLine($"Data/Hora:       {DataHora:yyyy-MM-dd HH:mm:ss}");
+            sb.AppendLine($"Cliente:         {(string.IsNullOrWhiteSpace(Cliente) ? "(não informado)" : Cliente)}");
+            sb.AppendLine($"%CIGAM_INSTAL%:  {(string.IsNullOrWhiteSpace(CigamInstal) ? "(não configurado)" : CigamInstal)}");
             sb.AppendLine("================================================================================");
 
             if (Ambiente != null)

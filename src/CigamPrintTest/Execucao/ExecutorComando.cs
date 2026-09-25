@@ -50,9 +50,7 @@ namespace CigamPrintTest.Execucao
                 }
                 catch
                 {
-                    // Em caso de caracteres especiais no caminho não resolvido pelo Path
-                    nomeArquivo = arquivoSemAspas;
-                    nomeSemExtensao = arquivoSemAspas;
+                    // Mantém defaults em caso de caracteres inválidos de caminho
                 }
             }
 
@@ -118,11 +116,24 @@ namespace CigamPrintTest.Execucao
         }
 
         /// <summary>
-        /// Resolve o caminho completo do executável, expandindo variáveis de ambiente.
+        /// Resolve o caminho completo do executável. Se o perfil possui 'comandoCigam',
+        /// ele tem prioridade sobre 'executavel' e é resolvido via regra CIGAM.
         /// </summary>
         public static string ResolverExecutavel(PerfilImpressao perfil, string caminhoArquivo = "", string codTeste = "")
         {
-            if (perfil == null || string.IsNullOrWhiteSpace(perfil.Executavel))
+            if (perfil == null)
+            {
+                return string.Empty;
+            }
+
+            if (!string.IsNullOrWhiteSpace(perfil.ComandoCigam))
+            {
+                var linha = CigamComandoHelper.MontarLinhaComando(perfil.ComandoCigam, perfil.CigamInstal, caminhoArquivo);
+                CigamComandoHelper.SepararExecutavelEArgumentos(linha, out var executavel, out _);
+                return executavel;
+            }
+
+            if (string.IsNullOrWhiteSpace(perfil.Executavel))
             {
                 return string.Empty;
             }
@@ -131,11 +142,38 @@ namespace CigamPrintTest.Execucao
         }
 
         /// <summary>
+        /// Resolve os argumentos de linha de comando. Se o perfil possui 'comandoCigam',
+        /// ele tem prioridade sobre 'argumentos' e é resolvido via regra CIGAM.
+        /// </summary>
+        public static string ResolverArgumentos(PerfilImpressao perfil, string caminhoArquivo = "", string codTeste = "", int via = 1)
+        {
+            if (perfil == null)
+            {
+                return string.Empty;
+            }
+
+            if (!string.IsNullOrWhiteSpace(perfil.ComandoCigam))
+            {
+                var linha = CigamComandoHelper.MontarLinhaComando(perfil.ComandoCigam, perfil.CigamInstal, caminhoArquivo);
+                CigamComandoHelper.SepararExecutavelEArgumentos(linha, out _, out var argumentos);
+                return argumentos;
+            }
+
+            return SubstituirPlaceholders(perfil.Argumentos ?? string.Empty, caminhoArquivo, codTeste, via);
+        }
+
+        /// <summary>
         /// Monta a linha de comando completa para exibição e diagnóstico.
+        /// Se perfil possui 'comandoCigam', retorna exatamente a linha montada pela regra CIGAM.
         /// Exemplo: "C:\Cigam\Laminort\CIGAM11\CGEditor.exe" -VG: -A:C:\x\DANFE30000044312.rtf
         /// </summary>
         public static string MontarComandoCompleto(PerfilImpressao perfil, string caminhoArquivo, string codTeste = "", int via = 1)
         {
+            if (perfil != null && !string.IsNullOrWhiteSpace(perfil.ComandoCigam))
+            {
+                return CigamComandoHelper.MontarLinhaComando(perfil.ComandoCigam, perfil.CigamInstal, caminhoArquivo);
+            }
+
             var exe = ResolverExecutavel(perfil, caminhoArquivo, codTeste);
             var args = SubstituirPlaceholders(perfil?.Argumentos ?? string.Empty, caminhoArquivo, codTeste, via);
 
@@ -159,10 +197,23 @@ namespace CigamPrintTest.Execucao
         {
             var resultado = new ResultadoExecucaoProcesso();
 
-            var executavel = ResolverExecutavel(perfil, caminhoArquivo, codTeste);
-            var argumentos = SubstituirPlaceholders(perfil?.Argumentos ?? string.Empty, caminhoArquivo, codTeste, via);
+            string executavel;
+            string argumentos;
+            string comandoCompleto;
+
+            if (perfil != null && !string.IsNullOrWhiteSpace(perfil.ComandoCigam))
+            {
+                comandoCompleto = CigamComandoHelper.MontarLinhaComando(perfil.ComandoCigam, perfil.CigamInstal, caminhoArquivo);
+                CigamComandoHelper.SepararExecutavelEArgumentos(comandoCompleto, out executavel, out argumentos);
+            }
+            else
+            {
+                executavel = ResolverExecutavel(perfil, caminhoArquivo, codTeste);
+                argumentos = SubstituirPlaceholders(perfil?.Argumentos ?? string.Empty, caminhoArquivo, codTeste, via);
+                comandoCompleto = MontarComandoCompleto(perfil, caminhoArquivo, codTeste, via);
+            }
+
             var pastaExecucao = ResolverPastaExecucao(perfil, caminhoArquivo, codTeste);
-            var comandoCompleto = MontarComandoCompleto(perfil, caminhoArquivo, codTeste, via);
 
             resultado.ExecutavelResolvido = executavel;
             resultado.ArgumentosResolvidos = argumentos;

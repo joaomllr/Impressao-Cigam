@@ -9,6 +9,8 @@ namespace CigamPrintTest.Config
     public class PerfilImpressao
     {
         public string Nome { get; set; } = string.Empty;
+        public string ComandoCigam { get; set; } = string.Empty;
+        public string CigamInstal { get; set; } = string.Empty;
         public string Executavel { get; set; } = string.Empty;
         public string Argumentos { get; set; } = string.Empty;
         public string PastaExecucao { get; set; } = string.Empty;
@@ -27,6 +29,8 @@ namespace CigamPrintTest.Config
             return new PerfilImpressao
             {
                 Nome = Nome,
+                ComandoCigam = ComandoCigam,
+                CigamInstal = CigamInstal,
                 Executavel = Executavel,
                 Argumentos = Argumentos,
                 PastaExecucao = PastaExecucao,

@@ -90,6 +90,37 @@ namespace CigamPrintTest
 
             try
             {
+                // Verifica se deve abrir o assistente de configuração inicial:
+                // - config ausente, ou "configurado" = false/ausente, ou executável do perfil padrão inexistente
+                if (ConfigLoader.DeveExibirAssistente())
+                {
+                    ConfigApp configParcial = null;
+                    try
+                    {
+                        if (File.Exists(ConfigLoader.ObterCaminhoPadrao()))
+                        {
+                            configParcial = ConfigLoader.Carregar();
+                        }
+                    }
+                    catch
+                    {
+                        // Se estiver corrompido, abre assistente limpo
+                    }
+
+                    using (var assistente = new FormConfiguracaoInicial(configParcial))
+                    {
+                        var dr = assistente.ShowDialog();
+                        if (dr != DialogResult.OK)
+                        {
+                            // Se o usuário cancelou e o sistema ainda não está configurado, encerra
+                            if (ConfigLoader.DeveExibirAssistente())
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 var mainForm = new MainForm(arquivo, perfil, vias, auto);
                 Application.Run(mainForm);
             }

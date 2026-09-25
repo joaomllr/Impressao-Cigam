@@ -31,6 +31,8 @@ namespace CigamPrintTest.Execucao
             Func<bool> cancelamentoSolicitado = null)
         {
             var resultado = ResultadoTeste.CriarNovo(perfil, caminhoArquivo, vias);
+            resultado.Cliente = _config.Cliente ?? string.Empty;
+            resultado.CigamInstal = _config.CigamInstal ?? string.Empty;
 
             // =========================================================================
             // ETAPA 1: AMBIENTE

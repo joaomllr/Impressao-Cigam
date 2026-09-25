@@ -7,11 +7,14 @@ namespace CigamPrintTest.Config
     /// </summary>
     public class ConfigApp
     {
+        public bool Configurado { get; set; } = false;
+        public string Cliente { get; set; } = string.Empty;
+        public string CigamInstal { get; set; } = string.Empty;
         public string PastaLogs { get; set; } = @"%LOCALAPPDATA%\CigamPrintTest\logs";
         public int TimeoutDeteccaoJobMs { get; set; } = 60000;
         public int TimeoutConclusaoJobMs { get; set; } = 120000;
         public int IntervaloPollingMs { get; set; } = 500;
-        public string PerfilPadrao { get; set; } = "CIGAM - DANFE (CGEditor)";
+        public string PerfilPadrao { get; set; } = "CIGAM - DANFE";
         public List<PerfilImpressao> Perfis { get; set; } = new List<PerfilImpressao>();
     }
 }

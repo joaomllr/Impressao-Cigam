@@ -48,6 +48,7 @@ namespace CigamPrintTest
         private Button _btnPapelNaoSei;
         private Button _btnCopiarDiag;
         private Button _btnAbrirLogs;
+        private Button _btnReconfigurar;
         private Label _lblBannerSessao;
 
         public MainForm(string arquivo = null, string perfil = null, int? vias = null, bool auto = false)
@@ -420,8 +421,18 @@ namespace CigamPrintTest
             };
             _btnCopiarDiag.Click += (s, e) => CopiarDiagnosticoParaClipboard();
 
+            _btnReconfigurar = new Button
+            {
+                Text = "Reconfigurar",
+                Width = 130,
+                Height = 32,
+                Font = new Font("Segoe UI", 9F, FontStyle.Regular)
+            };
+            _btnReconfigurar.Click += (s, e) => AbrirAssistenteConfiguracao();
+
             pnlRodape.Controls.Add(_btnAbrirLogs);
             pnlRodape.Controls.Add(_btnCopiarDiag);
+            pnlRodape.Controls.Add(_btnReconfigurar);
             painelPrincipal.Controls.Add(pnlRodape, 0, 4);
         }
 
@@ -495,6 +506,19 @@ namespace CigamPrintTest
 
         #region Inicialização e Configuração
 
+        private void AbrirAssistenteConfiguracao()
+        {
+            using (var assistente = new FormConfiguracaoInicial(_config))
+            {
+                if (assistente.ShowDialog(this) == DialogResult.OK)
+                {
+                    CarregarConfiguracaoOuOferecerPadrao();
+                    AtualizarBannerSessao();
+                    RegistrarLogTempoReal("Configuração atualizada com sucesso através do Assistente.");
+                }
+            }
+        }
+
         private void CarregarConfiguracaoOuOferecerPadrao()
         {
             var caminhoPadrao = ConfigLoader.ObterCaminhoPadrao();
@@ -503,34 +527,25 @@ namespace CigamPrintTest
             {
                 _config = ConfigLoader.Carregar(caminhoPadrao);
                 PopularPerfis();
+
+                if (!string.IsNullOrWhiteSpace(_config.Cliente))
+                {
+                    this.Text = $"Diagnóstico de Impressão ERP CIGAM - {_config.Cliente}";
+                }
             }
             catch (ConfigException cex)
             {
                 RegistrarLogTempoReal($"Falha de configuração ({cex.Campo}): {cex.Message}");
 
                 var resposta = MessageBox.Show(
-                    $"Problema na configuração do programa:\n\n{cex.Message}\n\nCampo: '{cex.Campo}'\n\nDeseja criar o arquivo de configuração padrão em '{caminhoPadrao}'?",
+                    $"Problema na configuração do programa:\n\n{cex.Message}\n\nCampo: '{cex.Campo}'\n\nDeseja abrir o Assistente de Configuração Inicial?",
                     "Configuração Inexistente ou Inválida",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
                 if (resposta == DialogResult.Yes)
                 {
-                    try
-                    {
-                        ConfigLoader.CriarConfigPadrao(caminhoPadrao);
-                        _config = ConfigLoader.Carregar(caminhoPadrao);
-                        PopularPerfis();
-                        RegistrarLogTempoReal($"Arquivo de configuração padrão criado com êxito em '{caminhoPadrao}'.");
-                    }
-                    catch (Exception exCriar)
-                    {
-                        MessageBox.Show(
-                            $"Não foi possível criar o arquivo de configuração padrão:\n\n{exCriar.Message}",
-                            "Erro ao Criar Configuração",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                    }
+                    AbrirAssistenteConfiguracao();
                 }
             }
             catch (Exception ex)
@@ -576,7 +591,8 @@ namespace CigamPrintTest
                     ? $"RDP ({ambiente.SessionName}, Cliente: {(string.IsNullOrEmpty(ambiente.ClientName) ? "N/D" : ambiente.ClientName)})"
                     : $"Local/Console ({ambiente.SessionName})";
 
-                _lblBannerSessao.Text = $" Sessão: {sessao} | Usuário: {ambiente.Dominio}\\{ambiente.Usuario} | Estação: {ambiente.Maquina} | Processo {ambiente.ProcessoBitness}";
+                var clienteInfo = !string.IsNullOrWhiteSpace(_config?.Cliente) ? $" | Cliente: {_config.Cliente}" : "";
+                _lblBannerSessao.Text = $" Sessão: {sessao} | Usuário: {ambiente.Dominio}\\{ambiente.Usuario} | Estação: {ambiente.Maquina} | Processo {ambiente.ProcessoBitness}{clienteInfo}";
             }
             catch (Exception ex)
             {
