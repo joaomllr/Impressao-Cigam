@@ -211,6 +211,10 @@ namespace CigamPrintTest
                 perfilDanfe.ExtensoesPermitidas = new List<string> { ".rtf" };
             }
 
+            // Remove perfis CIGAM antigos (ex.: "CIGAM - DANFE (CGEditor)" com caminho fixo de outro cliente)
+            config.Perfis.RemoveAll(p => !ReferenceEquals(p, perfilDanfe) &&
+                p.Nome != null && p.Nome.StartsWith("CIGAM - DANFE", StringComparison.OrdinalIgnoreCase));
+
             // 2. Perfil Teste do programa (Notepad), com esperarProcesso=false
             var perfilNotepad = config.Perfis.FirstOrDefault(p =>
                 string.Equals(p.Nome, "Teste do programa (Notepad)", StringComparison.OrdinalIgnoreCase));

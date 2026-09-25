@@ -111,7 +111,10 @@ namespace CigamPrintTest.Diagnostico
 
             // Verificar se caminho contém espaços e o perfil usa {arquivoSemAspas}
             info.TemEspacosNoCaminho = info.CaminhoResolvido.Contains(" ");
-            if (info.TemEspacosNoCaminho && perfil != null && perfil.Argumentos != null && perfil.Argumentos.Contains("{arquivoSemAspas}"))
+            bool passaSemAspas = perfil != null && (
+                (perfil.Argumentos != null && perfil.Argumentos.Contains("{arquivoSemAspas}")) ||
+                (!string.IsNullOrWhiteSpace(perfil.ComandoCigam) && !perfil.ComandoCigam.Contains("\"")));
+            if (info.TemEspacosNoCaminho && passaSemAspas)
             {
                 info.AlertaEspacosSemAspas = true;
                 info.TemAviso = true;

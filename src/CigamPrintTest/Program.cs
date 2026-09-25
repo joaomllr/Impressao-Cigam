@@ -53,25 +53,25 @@ namespace CigamPrintTest
                              string.Equals(arg, "-a", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(arg, "/arquivo", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (i + 1 < args.Length)
+                        if (i + 1 < argsNormalizados.Length)
                         {
-                            arquivo = args[++i].Trim('\"');
+                            arquivo = argsNormalizados[++i].Trim('\"');
                         }
                     }
                     else if (string.Equals(arg, "--perfil", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(arg, "-p", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(arg, "/perfil", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (i + 1 < args.Length)
+                        if (i + 1 < argsNormalizados.Length)
                         {
-                            perfil = args[++i].Trim('\"');
+                            perfil = argsNormalizados[++i].Trim('\"');
                         }
                     }
                     else if (string.Equals(arg, "--vias", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(arg, "-v", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(arg, "/vias", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (i + 1 < args.Length && int.TryParse(args[++i], out var v))
+                        if (i + 1 < argsNormalizados.Length && int.TryParse(argsNormalizados[++i], out var v))
                         {
                             vias = Math.Max(1, Math.Min(10, v));
                         }

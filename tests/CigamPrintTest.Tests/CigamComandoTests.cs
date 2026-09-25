@@ -1,3 +1,4 @@
+using CigamPrintTest.Diagnostico;
 using CigamPrintTest.Modelo;
 using System;
 using System.IO;
@@ -217,5 +218,89 @@ namespace CigamPrintTest.Tests
             Assert.Equal(@"C:\Cigam\ClienteX\CIGAM11\CGEditor.exe -VG: -A:C:\exemplo\DANFE30000044312.rtf", comandoEtapa3);
         }
 
+
+        [Fact]
+        public void ArquivoInfo_ComandoCigamSemAspas_AlertaEspacosAtivado()
+        {
+            var pastaTemp = Path.Combine(Path.GetTempPath(), "Cigam Teste Espacos " + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(pastaTemp);
+            var arquivoComEspaco = Path.Combine(pastaTemp, "DANFE Exemplo 123.rtf");
+            File.WriteAllText(arquivoComEspaco, @"{\rtf1 teste}");
+
+            try
+            {
+                var perfilSemAspas = new PerfilImpressao
+                {
+                    Nome = "CIGAM - DANFE",
+                    ComandoCigam = @"%CIGAM_INSTAL%CGEditor.exe -VG: -A:",
+                    CigamInstal = @"C:\Cigam\ClienteX\",
+                    ExtensoesPermitidas = new System.Collections.Generic.List<string> { ".rtf" }
+                };
+
+                var infoSemAspas = ArquivoInfo.Analisar(arquivoComEspaco, perfilSemAspas);
+                Assert.True(infoSemAspas.TemEspacosNoCaminho);
+                Assert.True(infoSemAspas.AlertaEspacosSemAspas);
+                Assert.True(infoSemAspas.TemAviso);
+
+                var perfilComAspas = new PerfilImpressao
+                {
+                    Nome = "CIGAM - DANFE",
+                    ComandoCigam = @"""%CIGAM_INSTAL%CGEditor.exe"" -A:""",
+                    CigamInstal = @"C:\Cigam\ClienteX\",
+                    ExtensoesPermitidas = new System.Collections.Generic.List<string> { ".rtf" }
+                };
+
+                var infoComAspas = ArquivoInfo.Analisar(arquivoComEspaco, perfilComAspas);
+                Assert.True(infoComAspas.TemEspacosNoCaminho);
+                Assert.False(infoComAspas.AlertaEspacosSemAspas);
+            }
+            finally
+            {
+                if (Directory.Exists(pastaTemp))
+                {
+                    Directory.Delete(pastaTemp, true);
+                }
+            }
+        }
+
+        [Fact]
+        public void Assistente_RemovePerfisCigamAntigos_AoSalvarNovo()
+        {
+            var config = new ConfigApp
+            {
+                Perfis = new System.Collections.Generic.List<PerfilImpressao>
+                {
+                    new PerfilImpressao
+                    {
+                        Nome = "CIGAM - DANFE (CGEditor)",
+                        Executavel = @"C:\Cigam\Laminort\CIGAM11\CGEditor.exe",
+                        Argumentos = "-VG: -A:{arquivoSemAspas}"
+                    },
+                    new PerfilImpressao
+                    {
+                        Nome = "Teste do programa (Notepad)",
+                        Executavel = @"C:\Windows\System32\notepad.exe"
+                    }
+                }
+            };
+
+            var perfilDanfe = new PerfilImpressao
+            {
+                Nome = "CIGAM - DANFE",
+                ComandoCigam = @"%CIGAM_INSTAL%CGEditor.exe -VG: -A:",
+                CigamInstal = @"C:\Cigam\NovoCliente\"
+            };
+            config.Perfis.Insert(0, perfilDanfe);
+
+            // Regra do assistente de remover perfis antigos
+            config.Perfis.RemoveAll(p => !ReferenceEquals(p, perfilDanfe) &&
+                p.Nome != null && p.Nome.StartsWith("CIGAM - DANFE", StringComparison.OrdinalIgnoreCase));
+
+            Assert.Equal(2, config.Perfis.Count);
+            Assert.Same(perfilDanfe, config.Perfis[0]);
+            Assert.Equal("CIGAM - DANFE", config.Perfis[0].Nome);
+            Assert.Equal("Teste do programa (Notepad)", config.Perfis[1].Nome);
+            Assert.DoesNotContain(config.Perfis, p => p.Nome == "CIGAM - DANFE (CGEditor)");
+        }
     }
 }
