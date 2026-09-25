@@ -90,6 +90,14 @@ namespace CigamPrintTest.Modelo
                 return DiagnosticoFinal;
             }
 
+            // Se a etapa 8 (conclusão no spooler) não foi executada, nada foi impresso
+            var etapa8 = Etapas.FirstOrDefault(e => e.Numero == 8);
+            if (etapa8 == null || etapa8.Status == StatusEtapa.Pendente)
+            {
+                DiagnosticoFinal = "Etapas executadas sem falhas. Nenhuma impressão foi disparada (diagnóstico parcial).";
+                return DiagnosticoFinal;
+            }
+
             if (string.Equals(ConfirmacaoPapel, "Não", StringComparison.OrdinalIgnoreCase))
             {
                 DiagnosticoFinal = "Problema físico ou porta sem retorno de status: documento foi entregue ao Spooler, mas não saiu na impressora (verifique papel, toner, cabo/rede ou fila travada no hardware).";

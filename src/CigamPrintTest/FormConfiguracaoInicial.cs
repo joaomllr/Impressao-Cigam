@@ -51,10 +51,12 @@ namespace CigamPrintTest
                 }
             }
 
-            // Se o comando ainda estiver vazio, aplica o placeholder com exemplo em cinza
+            // Se o comando ainda estiver vazio, preenche com o valor padrão do CIGAM (LF-NE-2128)
             if (string.IsNullOrWhiteSpace(txtComandoCigam.Text))
             {
-                AtivarPlaceholder();
+                txtComandoCigam.Text = CigamComandoHelper.ExemploConfig2128Padrao;
+                txtComandoCigam.ForeColor = SystemColors.WindowText;
+                _placeholderAtivo = false;
             }
 
             ValidarEmTempoReal();

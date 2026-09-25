@@ -103,5 +103,16 @@ namespace CigamPrintTest.Tests
                 }
             }
         }
+        [Fact]
+        public void DiagnosticoFinal_SomenteAmbiente_NaoAfirmaQueImprimiu()
+        {
+            var r = ResultadoTeste.CriarNovo(null, @"C:\x\teste.rtf", 1);
+            r.ObterOuCriarEtapa(1, "AMBIENTE").Status = StatusEtapa.OK;
+            r.ObterOuCriarEtapa(2, "ARQUIVO").Status = StatusEtapa.OK;
+
+            var diag = r.AtualizarDiagnosticoFinal();
+
+            Assert.Contains("Nenhuma impressão foi disparada", diag);
+        }
     }
 }
