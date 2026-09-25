@@ -1,0 +1,29 @@
+{
+  "pastaLogs": "%LOCALAPPDATA%\\CigamPrintTest\\logs",
+  "timeoutDeteccaoJobMs": 60000,
+  "timeoutConclusaoJobMs": 120000,
+  "intervaloPollingMs": 500,
+  "perfilPadrao": "CIGAM - DANFE (CGEditor)",
+  "perfis": [
+    {
+      "nome": "CIGAM - DANFE (CGEditor)",
+      "executavel": "C:\\Cigam\\Laminort\\CIGAM11\\CGEditor.exe",
+      "argumentos": "-VG: -A:{arquivoSemAspas}",
+      "pastaExecucao": "",
+      "esperarProcesso": false,
+      "timeoutProcessoMs": 60000,
+      "extensoesPermitidas": [".rtf"],
+      "pdfEsperado": ""
+    },
+    {
+      "nome": "Teste do programa (Notepad)",
+      "executavel": "C:\\Windows\\System32\\notepad.exe",
+      "argumentos": "/p {arquivo}",
+      "pastaExecucao": "",
+      "esperarProcesso": true,
+      "timeoutProcessoMs": 60000,
+      "extensoesPermitidas": [".txt"],
+      "pdfEsperado": ""
+    }
+  ]
+}

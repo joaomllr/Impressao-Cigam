@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9D934880-9FF7-4FC9-A3E7-36191771F995}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CigamPrintTest", "src\CigamPrintTest\CigamPrintTest.csproj", "{4D57D043-8B74-4C43-8A83-265FDDED87E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2E62AFA0-6E59-4763-91E4-29FB968F4660}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CigamPrintTest.Tests", "tests\CigamPrintTest.Tests\CigamPrintTest.Tests.csproj", "{E4DD7C83-4548-4D82-A9A6-22F330BD7D8F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D57D043-8B74-4C43-8A83-265FDDED87E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D57D043-8B74-4C43-8A83-265FDDED87E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D57D043-8B74-4C43-8A83-265FDDED87E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D57D043-8B74-4C43-8A83-265FDDED87E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4DD7C83-4548-4D82-A9A6-22F330BD7D8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4DD7C83-4548-4D82-A9A6-22F330BD7D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4DD7C83-4548-4D82-A9A6-22F330BD7D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4DD7C83-4548-4D82-A9A6-22F330BD7D8F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4D57D043-8B74-4C43-8A83-265FDDED87E9} = {9D934880-9FF7-4FC9-A3E7-36191771F995}
+		{E4DD7C83-4548-4D82-A9A6-22F330BD7D8F} = {2E62AFA0-6E59-4763-91E4-29FB968F4660}
+	EndGlobalSection
+EndGlobal
